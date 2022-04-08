@@ -1,0 +1,37 @@
+version: "3.7"
+
+networks:
+  my_network:
+    driver: bridge
+    name: my_network
+
+volumes:
+  file_vlm:
+
+services:
+  my_db:
+    image: postgres:14.0-alpine
+    container_name: my_db
+    ports:
+      - 15432:5432
+    volumes:
+      - file_vlm:/var/lib/postgresql/data
+    networks:
+      - my_network
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_USER: test
+      POSTGRES_DB: my_db
+
+#  user:
+#    build: ./user
+#    image: user
+#    container_name: user
+#    depends_on:
+#      - pg_database
+#    ports:
+#      - 8080:8080
+#    networks:
+#      - my_network
+#    environment:
+#      MY_DB: my_db:5432
