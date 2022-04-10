@@ -36,13 +36,13 @@ public class FileService implements IFileService{
                 directory.mkdir();
             }
 
-            File file1 = new File(FILE_DIR+userId+"\\"+file.getOriginalFilename());
-            file1.createNewFile();
-            FileOutputStream fos = new FileOutputStream(file1);
+            File createdFile = new File(FILE_DIR+userId+"\\"+file.getOriginalFilename());
+            createdFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(createdFile);
             fos.write(file.getBytes());
             fos.close();
 
-            return saveFileInfo(file.getOriginalFilename(),userId,file1);
+            return saveFileInfo(file.getOriginalFilename(),userId,createdFile);
         }
         else return null;
     }
@@ -58,12 +58,43 @@ public class FileService implements IFileService{
     }
 
     @Override
+    public FileInfo updateFile(MultipartFile file,long id) throws IOException {
+        if (fileTypes.contains(file.getContentType())){
+            FileInfo fileInfo = fileRepository.findById(id).get();
+
+            File createdFile = new File(FILE_DIR+fileInfo.getUserId()+"\\"+file.getOriginalFilename());
+            createdFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(createdFile);
+            fos.write(file.getBytes());
+            fos.close();
+
+            File deletedFile = new File(FILE_DIR+fileInfo.getUserId()+"\\"+fileInfo.getFilename());
+            deletedFile.delete();
+
+            return updateFileInfo(file.getOriginalFilename(),fileInfo,createdFile);
+        }
+        else return null;
+    }
+
+    @Override
     public void deleteFile(long id){
         FileInfo fileInfo = fileRepository.findById(id).get();
         File file = new File(FILE_DIR+fileInfo.getUserId()+"\\"+fileInfo.getFilename());
         file.delete();
         fileRepository.deleteById(id);
     }
+
+    private FileInfo updateFileInfo(String filename,FileInfo fileInfo,File file){
+        int lastIndexOf = filename.lastIndexOf(".");
+        String extension = filename.substring(lastIndexOf+1);
+
+        fileInfo.setFilename(filename);
+        fileInfo.setPath(FILE_DIR+fileInfo.getUserId()+"\\"+filename);
+        fileInfo.setFiletype(extension);
+        fileInfo.setFileSizeKB(file.length()/1024);
+        return fileRepository.save(fileInfo);
+    }
+
     private FileInfo saveFileInfo(String filename,long userId,File file){
         int lastIndexOf = filename.lastIndexOf(".");
         String extension = filename.substring(lastIndexOf+1);
@@ -76,4 +107,5 @@ public class FileService implements IFileService{
         fileInfo.setFileSizeKB(file.length()/1024);
         return fileRepository.save(fileInfo);
     }
+
 }

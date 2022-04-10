@@ -15,5 +15,7 @@ public interface IFileService {
 
     Optional<FileInfo> findFile(long id);
 
+    FileInfo updateFile(MultipartFile file, long id) throws IOException;
+
     void deleteFile(long id);
 }

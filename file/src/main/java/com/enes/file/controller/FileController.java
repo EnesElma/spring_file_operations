@@ -34,6 +34,18 @@ public class FileController {
         }
     }
 
+    @PostMapping(value = "update",consumes = {"multipart/form-data"})
+    public ResponseEntity<?> fileUpdate(@RequestParam("file") MultipartFile file, @RequestParam("fileId") long id) throws IOException {
+        FileInfo fileInfo = fileService.updateFile(file,id);
+
+        if (fileInfo != null)   return new ResponseEntity<>(fileInfo, HttpStatus.ACCEPTED);
+        else {
+            Map<String, String> message = new HashMap<>();
+            message.put("message", "Wrong file type. Required types (png,jpeg,jpg,docx,pdf,xlsx)");
+            return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("listAll")
     public ResponseEntity<?> listFiles(){
         return ResponseEntity.ok(fileService.listFiles());
