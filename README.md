@@ -19,3 +19,5 @@ For User service:
 ``
 localhost:8081/swagger-ui.html
 ``
+
+![Screenshot_1](https://user-images.githubusercontent.com/45045243/162617685-bfc05424-7ae3-4613-91ad-7f1d86a947d5.png)
