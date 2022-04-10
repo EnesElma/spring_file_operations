@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +83,12 @@ public class FileService implements IFileService{
         File file = new File(FILE_DIR+fileInfo.getUserId()+"\\"+fileInfo.getFilename());
         file.delete();
         fileRepository.deleteById(id);
+    }
+
+    @Override
+    public byte[] download(long id) throws IOException {
+        FileInfo fileInfo = fileRepository.findById(id).get();
+        return Files.readAllBytes(Path.of(FILE_DIR + fileInfo.getUserId() + "\\" + fileInfo.getFilename()));
     }
 
     private FileInfo updateFileInfo(String filename,FileInfo fileInfo,File file){

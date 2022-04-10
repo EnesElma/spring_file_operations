@@ -1,6 +1,7 @@
 package com.enes.file.service;
 
 import com.enes.file.entity.FileInfo;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,4 +19,6 @@ public interface IFileService {
     FileInfo updateFile(MultipartFile file, long id) throws IOException;
 
     void deleteFile(long id);
+
+    byte[] download(long id) throws IOException;
 }

@@ -4,12 +4,15 @@ import com.enes.file.entity.FileInfo;
 import com.enes.file.service.IFileService;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +64,17 @@ public class FileController {
             message.put("message", "File not found");
             return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("download/{fileId}")
+    public ResponseEntity<?> fileDownload(@PathVariable long fileId) throws IOException {
+        FileInfo fileInfo = fileService.findFile(fileId).get();
+        String attachment = "attachment; filename=\""+fileInfo.getFilename()+"\"";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", attachment);
+
+        return new ResponseEntity<>(fileService.download(fileId),headers,HttpStatus.OK);
     }
 
     @DeleteMapping("delete/{id}")
