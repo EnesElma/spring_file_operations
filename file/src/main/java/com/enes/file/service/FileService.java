@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FileService implements IFileService{
@@ -30,7 +31,12 @@ public class FileService implements IFileService{
     @Override
     public FileInfo uploadFile(MultipartFile file, long userId) throws IOException {
         if (fileTypes.contains(file.getContentType())){
-            File file1 = new File(FILE_DIR+file.getOriginalFilename());
+            File directory = new File(FILE_DIR+userId);
+            if (!directory.exists()){
+                directory.mkdir();
+            }
+
+            File file1 = new File(FILE_DIR+userId+"\\"+file.getOriginalFilename());
             file1.createNewFile();
             FileOutputStream fos = new FileOutputStream(file1);
             fos.write(file.getBytes());
@@ -41,6 +47,23 @@ public class FileService implements IFileService{
         else return null;
     }
 
+    @Override
+    public List<FileInfo> listFiles(){
+        return fileRepository.findAll();
+    }
+
+    @Override
+    public Optional<FileInfo> findFile(long id){
+        return fileRepository.findById(id);
+    }
+
+    @Override
+    public void deleteFile(long id){
+        FileInfo fileInfo = fileRepository.findById(id).get();
+        File file = new File(FILE_DIR+fileInfo.getUserId()+"\\"+fileInfo.getFilename());
+        file.delete();
+        fileRepository.deleteById(id);
+    }
     private FileInfo saveFileInfo(String filename,long userId,File file){
         int lastIndexOf = filename.lastIndexOf(".");
         String extension = filename.substring(lastIndexOf+1);
@@ -48,7 +71,7 @@ public class FileService implements IFileService{
         FileInfo fileInfo = new FileInfo();
         fileInfo.setFilename(filename);
         fileInfo.setFiletype(extension);
-        fileInfo.setPath(FILE_DIR+filename);
+        fileInfo.setPath(FILE_DIR+userId+"\\"+filename);
         fileInfo.setUserId(userId);
         fileInfo.setFileSizeKB(file.length()/1024);
         return fileRepository.save(fileInfo);
