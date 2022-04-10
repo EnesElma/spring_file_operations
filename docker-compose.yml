@@ -23,15 +23,30 @@ services:
       POSTGRES_USER: test
       POSTGRES_DB: my_db
 
-#  user:
-#    build: ./user
-#    image: user
-#    container_name: user
-#    depends_on:
-#      - pg_database
-#    ports:
-#      - 8080:8080
-#    networks:
-#      - my_network
-#    environment:
-#      MY_DB: my_db:5432
+  user:
+    build: ./user
+    image: user
+    container_name: user
+    depends_on:
+      - my_db
+    ports:
+      - 8081:8081
+    networks:
+      - my_network
+    environment:
+      MY_DB: my_db:5432
+      FILE_S: file:8080
+
+  file:
+    build: ./file
+    image: file
+    container_name: file
+    depends_on:
+      - my_db
+    ports:
+      - 8080:8080
+    networks:
+      - my_network
+    environment:
+      MY_DB: my_db:5432
+      FILE_UPLOAD_PATH: /home

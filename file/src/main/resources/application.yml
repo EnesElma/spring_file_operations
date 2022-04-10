@@ -20,7 +20,7 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
 
-file.upload.dir: D:\\storage\\
+file.upload.dir: ${FILE_UPLOAD_PATH:D:\\storage\\}
 
 
 
