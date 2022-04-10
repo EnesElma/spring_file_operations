@@ -26,4 +26,13 @@ public class UserService implements IUserService{
     public Optional<User> findUser(long id){
         return userRepository.findById(id);
     }
+
+    @Override
+    public void deleteUser(long id){
+        userRepository.deleteById(id);
+        builder.build()
+                .delete().uri("localhost:8080/file/deleteUserDirectory/"+id)
+                .retrieve()
+                .bodyToMono(Boolean.class).block();
+    }
 }

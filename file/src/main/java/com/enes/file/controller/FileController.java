@@ -82,4 +82,9 @@ public class FileController {
         fileService.deleteFile(id);
         return new ResponseEntity<>("File delete success",HttpStatus.OK);
     }
+
+    @DeleteMapping("deleteUserDirectory/{userId}")
+    public boolean deleteUserDirectory(@PathVariable long userId) throws IOException {
+        return fileService.deleteUserDirectory(userId);
+    }
 }

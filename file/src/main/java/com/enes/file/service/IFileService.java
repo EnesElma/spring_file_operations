@@ -18,6 +18,8 @@ public interface IFileService {
 
     FileInfo updateFile(MultipartFile file, long id) throws IOException;
 
+    boolean deleteUserDirectory(long userId) throws IOException;
+
     void deleteFile(long id);
 
     byte[] download(long id) throws IOException;

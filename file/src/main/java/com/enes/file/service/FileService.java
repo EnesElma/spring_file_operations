@@ -2,6 +2,7 @@ package com.enes.file.service;
 
 import com.enes.file.entity.FileInfo;
 import com.enes.file.repo.IFileRepository;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,13 @@ public class FileService implements IFileService{
             return updateFileInfo(file.getOriginalFilename(),fileInfo,createdFile);
         }
         else return null;
+    }
+
+    @Override
+    public boolean deleteUserDirectory(long userId) throws IOException {
+        File deleteDir = new File(FILE_DIR+userId);
+        FileUtils.deleteDirectory(deleteDir);
+        return true;
     }
 
     @Override
